@@ -2,7 +2,7 @@
 
 基于 Python 标准库的多模型文件协作工具，支持人工工作流、现有 Chrome DevTools MCP 和基于可见界面证据的 Model Router。无需模型 API 密钥。
 
-这是脱敏的公开开发快照，不包含任何使用者的账号配置、真实任务、聊天记录或浏览器会话。
+
 
 ## 功能
 
@@ -34,7 +34,7 @@ python -B -X utf8 -m orchestrator --help
 
 公开版本的所有订阅状态初始均为 unknown。候选型号和能力分数仅为演示，不代表产品真实性、性能基准、当前可用版本或任何人的账号权限。示例 Claude 允许名单采用单模型保守限制；按自己的明确授权修改策略后，仍须网页验证。
 
-运行时生成的 config/model-policy.json、tasks/、results/、final/、logs/ 和 imports/ 均被 Git 忽略，不能直接加入公共提交。
+
 
 ## 测试与限制
 
