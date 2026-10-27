@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Local Model Router fixture</title>
+<h1>Model Router — local synthetic account</h1>
+<button id="selector" aria-haspopup="menu" aria-expanded="false"></button>
+<div id="models" role="menu" aria-label="Models" hidden></div>
+<div role="radiogroup" aria-label="Reasoning level" id="levels"></div>
+<div role="alert" id="alert" aria-label=""></div>
+<label>Message<textarea aria-label="Message"></textarea></label><button id="send" aria-label="Send">Send</button>
+<p role="status" id="status">Ready</p><pre id="result" data-complete="false"></pre>
+<script>
+const q = new URLSearchParams(location.search), platform = q.get('model'), mode = q.get('mode');
+const names = {chatgpt:['GPT-6','GPT-7 Preview'],claude:['Claude Sonnet 5.5','Claude Opus 5.5'],gemini:['Gemini 4 Argon','Gemini 5 Neon']}[platform];
+let current = names[0], level = platform === 'chatgpt' ? 'Medium' : 'High';
+const selector = document.querySelector('#selector'), menu = document.querySelector('#models');
+function refresh(){
+ selector.textContent = 'Current model: ' + current;
+ selector.setAttribute('aria-label', 'Model selector, current model is ' + current);
+ menu.replaceChildren();
+ for(const name of names){
+  const b=document.createElement('button'); b.setAttribute('role','menuitemradio');
+  b.setAttribute('aria-checked', String(name===current)); b.textContent=name;
+  if(platform==='claude' && name.includes('Opus')){b.disabled=true;b.textContent+=' — Upgrade required';}
+  b.onclick=()=>{if(mode==='upgrade'){alertState('Upgrade required');return;} if(mode!=='switch-failure')current=name;refresh();};menu.append(b);
+ }
+ const levels=document.querySelector('#levels'); levels.replaceChildren();
+ for(const l of ['High','Medium']){const b=document.createElement('button');b.setAttribute('role','radio');b.setAttribute('aria-checked',String(l===level));b.textContent=l;b.onclick=()=>{if(mode!=='switch-failure')level=l;refresh();};levels.append(b);}
+}
+function alertState(text){const a=document.querySelector('#alert');a.textContent=text;a.setAttribute('aria-label',text);}
+selector.onclick=()=>{menu.hidden=!menu.hidden;selector.setAttribute('aria-expanded',String(!menu.hidden));};
+refresh();
+if(mode==='quota')alertState('Quota exhausted: usage limit reached');
+if(mode==='unavailable')alertState('Upgrade required');
+document.querySelector('#send').onclick=()=>{
+ const value=document.querySelector('textarea').value;if(!value.trim())return;
+ document.querySelector('#status').textContent='Waiting';
+ setTimeout(()=>{const r=document.querySelector('#result');r.textContent=`## 摘要\n${platform} ${current}/${level}：本地模拟，仅验证模型路由与文件流程。\n## 详细结果\n已接收 ${value.length} 字符。\n## 依据与核验\n未调用真实模型。\n## 风险与分歧\n待人工审核。`;r.dataset.complete='true';document.querySelector('#status').textContent='LOCAL_RESULT_COMPLETE';},200);
+};
+</script></html>

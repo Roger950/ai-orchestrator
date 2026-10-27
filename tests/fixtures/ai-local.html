@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Local AI workflow fixture (synthetic)</title>
+<h1>Local AI workflow fixture — synthetic results</h1>
+<label>Message <textarea aria-label="Message" rows="6" cols="70"></textarea></label>
+<button type="button" aria-label="Send">Send</button>
+<p role="status" id="status">Ready</p><pre id="result" data-complete="false"></pre>
+<script>
+const query = new URLSearchParams(location.search);
+const model = query.get('model');
+document.title = `${model} local synthetic fixture`;
+document.querySelector('button').onclick = () => {
+  const input = document.querySelector('textarea').value;
+  if (!input.trim()) return;
+  document.querySelector('#status').textContent = 'Waiting for local simulation';
+  document.querySelector('#result').dataset.complete = 'false';
+  if (query.get('mode') === 'timeout') return;
+  setTimeout(() => {
+    const output = document.querySelector('#result');
+    output.textContent = `## 摘要\n${model}: 本地模拟结果，验证文件流程，不代表真实模型回答。\n## 详细结果\n已接收 ${input.length} 个字符。\n## 依据与核验\n仅本地测试，无联网核验。\n## 风险与分歧\n尚待人工审核。`;
+    output.dataset.complete = query.get('mode') === 'incomplete' ? 'false' : 'true';
+    document.querySelector('#status').textContent = 'LOCAL_RESULT_COMPLETE';
+  }, 250);
+};
+</script></html>
